@@ -1,0 +1,116 @@
+﻿<Page
+    x:Class="EventManager.View.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EventManager.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"  
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
+    xmlns:converters="using:EventManager.Converters"
+    xmlns:vm="using:EventManager.ViewModel"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <DataTemplate x:Key="NewsTemplate">
+            <Grid Background="#33FFFFFF" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="{Binding Photo}" Margin="5" Height="30" Width="30"/>
+                <!--<StackPanel Grid.Column="1" Margin="5,0">-->
+                <TextBlock Grid.Column="1" Margin="5,0" Text="{Binding Text}" Style="{ThemeResource BaseTextBlockStyle}" TextWrapping="WrapWholeWords"/>
+                <TextBlock Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Text="{Binding Date}" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" VerticalAlignment="Bottom" />
+                <!--</StackPanel>-->
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Page.DataContext>
+        <Binding Mode="OneWay"
+        Path="WelcomeViewModel"
+        Source="{StaticResource Locator}" />
+    </Page.DataContext>
+    <Hub Header="{Binding GroupName}">
+        <Hub.Background>
+            <ImageBrush ImageSource="/Assets/Background.png"
+                    Stretch="UniformToFill" />
+        </Hub.Background>
+        <HubSection Header="НОВОСТИ">
+            <DataTemplate>
+                    <ListView x:Name="listView" Margin="0" ItemTemplate="{StaticResource NewsTemplate}"    ItemsSource="{Binding News}" HorizontalAlignment="Stretch">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>                
+            </DataTemplate>
+        </HubSection>
+
+        <HubSection x:Name="NextEvent" Header="СЛЕДУЮЩЕЕ ЗАНЯТИЕ" IsHeaderInteractive="True" IsEnabled="{Binding HubSectionEnabled}">
+            <DataTemplate>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="54*"/>
+                        <RowDefinition Height="49*"/>
+                        <RowDefinition Height="398*"/>
+                    </Grid.RowDefinitions>
+                    <Popup Grid.RowSpan="3" Grid.Row="0" x:Name="myPopup" IsOpen="{Binding ShowCaptchaPopup}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Background="#7F110000"  Margin="10">
+                            <TextBlock TextWrapping="Wrap" Margin="10" Text="Введите текст с картинки" Style="{ThemeResource  BaseTextBlockStyle}"/>
+                            <Image Source="{Binding CaptchaImageUrl}" Margin="10"/>
+                            <TextBox Text="{Binding CapthaText, Mode=TwoWay}"/>
+                            <Button Command="{Binding Ok}" Margin="10">OK</Button>
+                            <Button Command="{Binding Cancel}" Margin="10">Cancel</Button>
+                        </StackPanel>
+                    </Popup>
+                    <TextBlock Style="{ThemeResource  BaseTextBlockStyle}" HorizontalAlignment="Center" Text="{Binding Decription}" />
+                    <TextBlock Grid.Row="1" Style="{ThemeResource  BaseTextBlockStyle}" HorizontalAlignment="Center" Text= "{Binding EventInfo}" />
+                    <Button  Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding PostSign}" Visibility="{Binding NoPlannedEvent, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
+                        <Button.Background>
+                            <SolidColorBrush Color="White" Opacity="1" />
+                        </Button.Background>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource  BaseTextBlockStyle}" Grid.Row="2" Foreground="Black" Text="Разместить объвление о следующей игре" TextWrapping="Wrap"/>
+                    </Button>
+                    <Button  Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding CheckVisit}" Visibility="{Binding IsPlannedEvent , Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
+                        <Button.Background>
+                            <SolidColorBrush Color="White" Opacity="1" />
+                        </Button.Background>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource  BaseTextBlockStyle}" Grid.Row="2" Foreground="Black" Text="Отметить посещение" TextWrapping="Wrap"/>
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </HubSection>
+
+        <HubSection x:Name="Finance" Header="БУХГАЛТЕРИЯ" IsHeaderInteractive="True" DataContext="{Binding TitleAccountingViewModel}">
+            <DataTemplate>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" VerticalAlignment="Center" >
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="Мячевой фонд:"/>
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{Binding BallsFund}"/>
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text=" р" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  Grid.Row="1"  HorizontalAlignment="Center" VerticalAlignment="Center" >
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="Остаток оплаты за месяц:"/>
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{Binding RestForMounth}"/>
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text=" р"/>
+                    </StackPanel>
+                    <Button Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding CanPayPerMounth, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}" Command="{Binding PayForMounth}">
+                        <TextBlock Text="Зарегистрировать оплату месяца"/>
+                    </Button>
+                    <Button Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding AccountingDetails}">
+                        <TextBlock Text="Подробнее"/>
+                    </Button>
+                </Grid>
+
+            </DataTemplate>
+        </HubSection>
+    </Hub>
+</Page>

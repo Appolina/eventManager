@@ -1,0 +1,60 @@
+﻿<Page
+    x:Class="EventManager.View.SettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EventManager.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:EventManager.Converters"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.DataContext>
+        <Binding Mode="OneWay"
+        Path="SettingsViewModel"
+        Source="{StaticResource Locator}" />
+    </Page.DataContext>
+    <Page.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <DataTemplate x:Key="ComboboxTemplate">
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="{Binding Photo}" Height="30" Width="30" />
+                <StackPanel Grid.Column="1" Margin="14.5,0,0,0">
+                    <TextBlock Grid.Column="1" Margin="5" Text="{Binding Name}" Style="{ThemeResource BaseTextBlockStyle}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Assets/Background.jpg"
+                    Stretch="UniformToFill" />
+        </Grid.Background>
+        <StackPanel Grid.Row="0" Margin="19,0,0,0">
+            <TextBlock Text="{Binding GroupName}" Style="{ThemeResource HeaderTextBlockStyle }" Margin="0,12,0,0"/>
+            <TextBlock Text="ПОСЕЩЕНИЕ" Margin="0,-6.5,0,26.5" Style="{ThemeResource TitleTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="30,0" >
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                <TextBox Text="Выберите группу" Background="Transparent" BorderBrush="Transparent" Margin="0" VerticalAlignment="Stretch"/>
+                <ComboBox x:Name="comboBox" SelectedValue="{Binding SelectedGroup, Mode=TwoWay}" ItemTemplate="{StaticResource ComboboxTemplate}" ItemsSource="{Binding Groups}" Margin="0"/>
+                <TextBox Text="Выберите группу" Foreground="Red" FontSize="15" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Margin="0"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="0">
+                <TextBox Text="Текст новости"  Background="Transparent" BorderBrush="Transparent" Margin="0"/>
+                <TextBox x:Name="textBox"  Text="{Binding SignSuffix, Mode=TwoWay}"  Height="219" TextWrapping="Wrap" Margin="0"/>
+                <TextBox Text="{Binding TextValidationText}" Foreground="Red" FontSize="15" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Margin="0" Visibility="{Binding TextValidationTextVisibility , Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
+            <Button HorizontalAlignment="Center" Command="{Binding Next}" Margin="0">
+                <Button.Background>
+                    <SolidColorBrush Color="White" Opacity="1" />
+                </Button.Background>
+                <TextBox Text="Далее" Margin="0"/>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Page>
